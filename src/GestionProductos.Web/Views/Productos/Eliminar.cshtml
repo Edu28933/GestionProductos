@@ -1,0 +1,4 @@
+@model Producto
+@{ ViewData["Title"] = "Eliminar producto"; }
+<div class="page-heading"><div><div class="eyebrow">INVENTARIO / ELIMINAR</div><h1>Eliminar producto</h1><p>Confirma esta acción antes de continuar.</p></div></div>
+<div class="panel form-panel"><div class="panel-body"><div class="delete-icon">!</div><h2>¿Eliminar “@Model.Nombre”?</h2><p>El producto #@Model.Id será eliminado del inventario. Esta acción no se puede deshacer.</p><form asp-action="Eliminar" asp-route-id="@Model.Id" method="post" class="form-actions">@Html.AntiForgeryToken()<button type="submit" class="btn btn-danger btn-lg">× Sí, eliminar</button><a asp-action="Index" class="btn btn-light btn-lg">Cancelar</a></form></div></div>

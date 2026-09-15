@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "GestionProductos.Web": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:5168",
+      "environmentVariables": { "ASPNETCORE_ENVIRONMENT": "Development" }
+    }
+  }
+}

@@ -1,0 +1,5 @@
+@model ProductoFormularioViewModel
+<div class="form-grid">
+    <div class="mb-4"><label asp-for="Nombre" class="form-label"></label><input asp-for="Nombre" class="form-control form-control-lg" maxlength="120" placeholder="Ej. Cuaderno universitario" /><span asp-validation-for="Nombre" class="field-error"></span></div>
+    <div class="row g-3"><div class="col-md-6"><label asp-for="Precio" class="form-label">Precio (Q)</label><div class="input-group input-group-lg"><span class="input-group-text">Q</span><input asp-for="Precio" class="form-control" type="number" step="any" placeholder="0.00" /></div><span asp-validation-for="Precio" class="field-error"></span><div class="form-hint">Utiliza punto decimal; máximo dos decimales.</div></div><div class="col-md-6"><label asp-for="Cantidad" class="form-label"></label><input asp-for="Cantidad" class="form-control form-control-lg" type="number" step="1" placeholder="0" /><span asp-validation-for="Cantidad" class="field-error"></span><div class="form-hint">Unidades disponibles en inventario.</div></div></div>
+</div>

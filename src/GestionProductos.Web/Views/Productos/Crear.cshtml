@@ -1,0 +1,4 @@
+@model ProductoFormularioViewModel
+@{ ViewData["Title"] = "Nuevo producto"; }
+<div class="page-heading"><div><div class="eyebrow">INVENTARIO / NUEVO</div><h1>Nuevo producto</h1><p>Completa la información para registrar un producto.</p></div></div>
+<div class="panel form-panel"><div class="panel-heading"><div><h2>Información del producto</h2><p>Los campos son obligatorios.</p></div></div><form asp-action="Crear" method="post" class="panel-body">@Html.AntiForgeryToken()<partial name="_Formulario" model="Model" /><div class="form-actions"><button type="submit" class="btn btn-primary btn-lg">✓ Guardar producto</button><a asp-action="Index" class="btn btn-light btn-lg">Cancelar</a></div></form></div>

@@ -1,0 +1,4 @@
+@model ProductoFormularioViewModel
+@{ ViewData["Title"] = "Editar producto"; }
+<div class="page-heading"><div><div class="eyebrow">INVENTARIO / EDITAR</div><h1>Editar producto</h1><p>Actualiza la información del producto #@Model.Id.</p></div></div>
+<div class="panel form-panel"><div class="panel-heading"><div><h2>Información del producto</h2><p>Revisa los cambios antes de guardar.</p></div></div><form asp-action="Editar" asp-route-id="@Model.Id" method="post" class="panel-body">@Html.AntiForgeryToken()<partial name="_Formulario" model="Model" /><div class="form-actions"><button type="submit" class="btn btn-primary btn-lg">✓ Guardar cambios</button><a asp-action="Index" class="btn btn-light btn-lg">Cancelar</a></div></form></div>
