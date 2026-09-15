@@ -66,16 +66,8 @@ Resultados realizados en este entorno:
 - Inicio de la web con la base principal conservada: respondió correctamente.
 - Revisión visual en navegador de escritorio: inicio y formulario correctos. La vista móvil aún no se comprobó visualmente.
 
-## Publicar y entregar
+## Entrega
 
-El repositorio remoto y el video no se han creado. Cree un repositorio vacío en GitHub o GitLab y ejecute, sustituyendo la URL:
+Repositorio actualizado: <https://github.com/Edu28933/GestionProductos>
 
-```powershell
-git add .
-git commit -m "Crear CRUD web y pruebas manuales aisladas"
-git branch -M main
-git remote add origin https://github.com/USUARIO/REPOSITORIO.git
-git push -u origin main
-```
-
-Entregue el enlace real y el videotutorial de máximo 10 minutos. No suba `productos.db`, `bin/` ni `obj/`.
+Falta grabar y entregar el videotutorial de máximo 10 minutos siguiendo `GUION_VIDEO.md`. El archivo local `productos.db` y las carpetas `bin/` y `obj/` están excluidos del repositorio.
