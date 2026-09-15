@@ -487,4 +487,4 @@ Antes de entregar, confirmen todo lo siguiente:
 
 ### ¿Dónde está la base de datos?
 
-> “Está en `productos.db`, en la raíz de la solución. Las pruebas manuales no abren ese archivo.”
+> “Está en la carpeta local de datos de Windows, dentro de `AppData\\Local\\GestionProductos\\productos.db`. Las pruebas manuales no abren ese archivo.”

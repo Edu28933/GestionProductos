@@ -35,7 +35,13 @@ dotnet run --project tests/GestionProductos.PruebasManuales -c Release --no-buil
 
 ## Base de datos
 
-La web usa `productos.db` en la **raíz de la solución**. La base local existente se copió allí y se verificó con SHA-256; los datos se conservaron. El archivo `.db` está excluido de Git. En una copia nueva del repositorio, la web crea automáticamente el archivo y la tabla `Productos` al iniciarse. Para usar otra ruta, configure la variable de entorno `Database__Path` o `Database:Path` en `src/GestionProductos.Web/appsettings.json`. La web no borra registros al arrancar.
+La web usa una carpeta de datos de Windows con permisos de escritura estables:
+
+```text
+C:\Users\USUARIO\AppData\Local\GestionProductos\productos.db
+```
+
+Al iniciar por primera vez, si existe una base de una versión anterior en la raíz de la solución, se copia automáticamente a esta ubicación sin sobrescribir una base ya migrada. Así se conservan los registros y SQLite puede crear sus archivos auxiliares al ejecutar desde Visual Studio. El archivo `.db` está excluido de Git. En una instalación nueva, la web crea automáticamente el archivo, la carpeta y la tabla `Productos`. Para usar otra ruta, configure la variable de entorno `Database__Path` o `Database:Path` en `src/GestionProductos.Web/appsettings.json`. La web no borra registros al arrancar.
 
 El precio se recibe como `decimal`, se limita a dos decimales, se multiplica por 100 y se guarda como entero en `PrecioCentavos`. Por ejemplo, `Q12.25` se guarda como `1225`. Al consultar se divide por `100m`. SQLite exige nombre no vacío, precio positivo y cantidad no negativa. Las consultas con valores usan parámetros SQL. Los formularios POST tienen protección antifalsificación y validación en servidor.
 

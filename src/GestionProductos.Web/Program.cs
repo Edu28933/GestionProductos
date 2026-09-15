@@ -8,13 +8,21 @@ CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 
-// La ruta se resuelve desde la solución, no desde el directorio de ejecución de Visual Studio.
+// La base se guarda en una carpeta de usuario con permisos de escritura estables.
 var raiz = BuscarRaiz(builder.Environment.ContentRootPath) ?? BuscarRaiz(AppContext.BaseDirectory)
     ?? throw new InvalidOperationException("No se encontró GestionProductos.sln para resolver la base de datos.");
 var configurada = builder.Configuration["Database:Path"];
 var ruta = !string.IsNullOrWhiteSpace(configurada)
     ? Path.GetFullPath(Path.IsPathRooted(configurada) ? configurada : Path.Combine(raiz, configurada))
-    : Path.Combine(raiz, "productos.db");
+    : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "GestionProductos", "productos.db");
+
+// Migra una base creada por versiones anteriores sin sobrescribir una base ya migrada.
+var rutaAnterior = Path.Combine(raiz, "productos.db");
+Directory.CreateDirectory(Path.GetDirectoryName(ruta)!);
+if (string.IsNullOrWhiteSpace(configurada) && File.Exists(rutaAnterior) && !File.Exists(ruta))
+    File.Copy(rutaAnterior, ruta);
+
 var baseDatos = new BaseDatos(ruta);
 baseDatos.Inicializar();
 builder.Services.AddSingleton(baseDatos);

@@ -9,6 +9,9 @@ public sealed class BaseDatos
     public BaseDatos(string? ruta = null)
     {
         Ruta = Path.GetFullPath(ruta ?? Path.Combine(Environment.CurrentDirectory, "productos.db"));
+        var directorio = Path.GetDirectoryName(Ruta);
+        if (!string.IsNullOrWhiteSpace(directorio))
+            Directory.CreateDirectory(directorio);
     }
 
     public SqliteConnection AbrirConexion()
