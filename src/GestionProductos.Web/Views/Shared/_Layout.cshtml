@@ -12,8 +12,9 @@
         <aside class="sidebar" id="sidebar">
             <a asp-controller="Productos" asp-action="Index" class="brand"><span class="brand-mark">◆</span><span>Gestión de<br />Productos</span></a>
             <div class="nav-label">MENÚ PRINCIPAL</div>
-            <a class="side-link" asp-controller="Productos" asp-action="Index"><span aria-hidden="true">▦</span> Productos</a>
-            <a class="side-link" asp-controller="Productos" asp-action="Crear"><span aria-hidden="true">＋</span> Nuevo producto</a>
+            <a class="side-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" asp-controller="Productos" asp-action="Index"><span aria-hidden="true">▦</span> Productos</a>
+            <a class="side-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Inventario" ? "active" : "")" asp-controller="Productos" asp-action="Inventario"><span aria-hidden="true">▤</span> Inventario</a>
+            <a class="side-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Crear" ? "active" : "")" asp-controller="Productos" asp-action="Crear"><span aria-hidden="true">＋</span> Nuevo producto</a>
             <div class="sidebar-foot">Panel de inventario<br /><small>Proyecto académico · .NET 9</small></div>
         </aside>
         <div class="main-area">

@@ -24,6 +24,44 @@ public sealed class ProductosController(ProductoRepository repositorio) : Contro
         });
     }
 
+    public IActionResult Inventario(string? busqueda, string estado = "todos")
+    {
+        const int limiteBajoStock = 5;
+        var todos = repositorio.Listar();
+        var consulta = todos.AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(busqueda))
+        {
+            var termino = busqueda.Trim();
+            consulta = consulta.Where(p =>
+                p.Nombre.Contains(termino, StringComparison.OrdinalIgnoreCase) ||
+                p.Id.ToString().Contains(termino, StringComparison.OrdinalIgnoreCase));
+        }
+
+        consulta = estado switch
+        {
+            "disponibles" => consulta.Where(p => p.Cantidad > limiteBajoStock),
+            "bajo" => consulta.Where(p => p.Cantidad > 0 && p.Cantidad <= limiteBajoStock),
+            "agotados" => consulta.Where(p => p.Cantidad == 0),
+            _ => consulta
+        };
+
+        return View(new InventarioViewModel
+        {
+            Busqueda = busqueda,
+            Estado = estado,
+            Productos = consulta.OrderBy(p => p.Cantidad).ThenBy(p => p.Nombre).ToList(),
+            ProductosConAlerta = todos.Where(p => p.Cantidad <= limiteBajoStock)
+                .OrderBy(p => p.Cantidad).ThenBy(p => p.Nombre).Take(5).ToList(),
+            TotalProductos = todos.Count,
+            TotalUnidades = todos.Sum(p => (long)p.Cantidad),
+            ValorInventario = todos.Sum(p => p.Precio * p.Cantidad),
+            SinExistencias = todos.Count(p => p.Cantidad == 0),
+            BajoStock = todos.Count(p => p.Cantidad > 0 && p.Cantidad <= limiteBajoStock),
+            Disponibles = todos.Count(p => p.Cantidad > limiteBajoStock)
+        });
+    }
+
     public IActionResult Detalle(int id)
     {
         var producto = repositorio.Buscar(id);

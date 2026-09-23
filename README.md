@@ -2,6 +2,8 @@
 
 Proyecto académico en C# y .NET 9 con interfaz web ASP.NET Core MVC, vistas Razor, Bootstrap 5 y SQLite. Incluye cinco pruebas unitarias manuales de una función de negocio aislada. No usa xUnit, NUnit ni MSTest.
 
+La aplicación incluye una pantalla de inventario con totales de productos y unidades, valor monetario de existencias, alertas de stock bajo o agotado, búsqueda, filtros por estado y accesos para consultar o actualizar cada producto.
+
 ## Estructura
 
 ```text

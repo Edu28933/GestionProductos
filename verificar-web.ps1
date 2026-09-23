@@ -23,6 +23,13 @@ try {
     if (-not $respuesta.Content.Contains('Producto guardado correctamente')) { throw 'No se creó el producto' }
     $lista = Invoke-WebRequest "$url/Productos?busqueda=Cuaderno" -WebSession $sesion
     if (-not $lista.Content.Contains('Cuaderno') -or -not $lista.Content.Contains('Q37.50')) { throw 'Listado, búsqueda o resumen incorrecto' }
+    $inventario = Invoke-WebRequest "$url/Productos/Inventario" -WebSession $sesion
+    $inventarioHtml = [System.Net.WebUtility]::HtmlDecode($inventario.Content)
+    foreach ($texto in @('CONTROL DE EXISTENCIAS', 'Valor total', 'Stock bajo', 'Cuaderno', 'Q37.50')) {
+        if (-not $inventarioHtml.Contains($texto)) { throw "Inventario incompleto: $texto" }
+    }
+    $inventarioFiltrado = Invoke-WebRequest "$url/Productos/Inventario?estado=bajo" -WebSession $sesion
+    if (-not $inventarioFiltrado.Content.Contains('1 resultado(s)') -or -not $inventarioFiltrado.Content.Contains('Cuaderno')) { throw 'Filtro de inventario incorrecto' }
     $detalle = Invoke-WebRequest "$url/Productos/Detalle/1" -WebSession $sesion
     if (-not $detalle.Content.Contains('Cuaderno')) { throw 'Detalle incorrecto' }
     $editar = Invoke-WebRequest "$url/Productos/Editar/1" -WebSession $sesion
@@ -48,7 +55,7 @@ try {
     $token = [regex]::Match($eliminar.Content, 'name="__RequestVerificationToken"[^>]*value="([^"]+)"').Groups[1].Value
     $respuesta = Invoke-WebRequest "$url/Productos/Eliminar/1" -Method Post -WebSession $sesion -Body @{__RequestVerificationToken=$token}
     if (-not $respuesta.Content.Contains('Producto eliminado correctamente') -or -not [System.Net.WebUtility]::HtmlDecode($respuesta.Content).Contains('Aún no hay productos')) { throw 'Eliminación o estado vacío incorrecto' }
-    Write-Output 'WEB: estado vacío, creación, listado, búsqueda, detalle, validación, edición y eliminación: PASÓ'
+    Write-Output 'WEB: CRUD, validaciones, persistencia y pantalla de inventario: PASÓ'
 }
 finally {
     if ($proceso) { Stop-Process -Id $proceso.Id -Force -ErrorAction SilentlyContinue }

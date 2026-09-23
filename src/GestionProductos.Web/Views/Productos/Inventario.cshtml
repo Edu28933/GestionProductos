@@ -1,0 +1,79 @@
+@model InventarioViewModel
+@{ ViewData["Title"] = "Inventario"; }
+
+<div class="page-heading">
+    <div><div class="eyebrow">CONTROL DE EXISTENCIAS</div><h1>Inventario</h1><p>Supervisa existencias, valor y productos que necesitan reposición</p></div>
+    <a class="btn btn-primary btn-lg" asp-action="Crear">＋ Registrar producto</a>
+</div>
+
+<div class="row g-3 mb-4 inventory-summary">
+    <div class="col-sm-6 col-xl"><div class="summary-card compact"><div class="summary-icon blue">▦</div><div><div class="summary-label">Productos</div><div class="summary-value">@Model.TotalProductos</div></div></div></div>
+    <div class="col-sm-6 col-xl"><div class="summary-card compact"><div class="summary-icon teal">▤</div><div><div class="summary-label">Unidades</div><div class="summary-value">@Model.TotalUnidades</div></div></div></div>
+    <div class="col-sm-6 col-xl"><div class="summary-card compact"><div class="summary-icon green">Q</div><div><div class="summary-label">Valor total</div><div class="summary-value money">Q@(Model.ValorInventario.ToString("N2"))</div></div></div></div>
+    <div class="col-sm-6 col-xl"><div class="summary-card compact"><div class="summary-icon amber">!</div><div><div class="summary-label">Stock bajo</div><div class="summary-value">@Model.BajoStock</div></div></div></div>
+    <div class="col-sm-6 col-xl"><div class="summary-card compact"><div class="summary-icon red">×</div><div><div class="summary-label">Agotados</div><div class="summary-value">@Model.SinExistencias</div></div></div></div>
+</div>
+
+@if (Model.ProductosConAlerta.Count > 0)
+{
+    <section class="stock-alert mb-4">
+        <div class="stock-alert-title"><span>!</span><div><strong>Productos que necesitan atención</strong><small>Productos agotados o con 5 unidades o menos</small></div></div>
+        <div class="alert-items">
+            @foreach (var producto in Model.ProductosConAlerta)
+            {
+                <a asp-action="Editar" asp-route-id="@producto.Id" class="alert-item">
+                    <div><strong>@producto.Nombre</strong><small>#@producto.Id</small></div>
+                    <span class="status-pill @(producto.Cantidad == 0 ? "unavailable" : "low")">@(producto.Cantidad == 0 ? "Agotado" : $"{producto.Cantidad} unidades")</span>
+                </a>
+            }
+        </div>
+    </section>
+}
+
+<section class="panel">
+    <div class="panel-heading inventory-tools">
+        <div><h2>Existencias por producto</h2><p>@Model.Productos.Count resultado(s) según los filtros seleccionados</p></div>
+        <form method="get" asp-action="Inventario" class="inventory-filter-form">
+            <label class="visually-hidden" for="busquedaInventario">Buscar</label>
+            <input id="busquedaInventario" name="busqueda" class="form-control" value="@Model.Busqueda" placeholder="Buscar por nombre o ID" />
+            <label class="visually-hidden" for="estado">Estado</label>
+            <select id="estado" name="estado" class="form-select">
+                <option value="todos" selected="@(Model.Estado == "todos")">Todos los estados</option>
+                <option value="disponibles" selected="@(Model.Estado == "disponibles")">Disponibles</option>
+                <option value="bajo" selected="@(Model.Estado == "bajo")">Stock bajo</option>
+                <option value="agotados" selected="@(Model.Estado == "agotados")">Agotados</option>
+            </select>
+            <button class="btn btn-primary" type="submit">Filtrar</button>
+            @if (!string.IsNullOrWhiteSpace(Model.Busqueda) || Model.Estado != "todos") { <a class="btn btn-light" asp-action="Inventario">Limpiar</a> }
+        </form>
+    </div>
+
+    @if (Model.Productos.Count == 0)
+    {
+        <div class="empty-state"><div class="empty-icon">▤</div><h3>No hay productos para mostrar</h3><p>Cambia los filtros o registra un nuevo producto.</p><a asp-action="Crear" class="btn btn-primary">＋ Registrar producto</a></div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table product-table inventory-table align-middle mb-0">
+                <thead><tr><th>Producto</th><th>Precio unitario</th><th>Existencias</th><th>Valor en stock</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <tbody>
+                @foreach (var p in Model.Productos)
+                {
+                    var estadoClase = p.Cantidad == 0 ? "unavailable" : p.Cantidad <= 5 ? "low" : "available";
+                    var estadoTexto = p.Cantidad == 0 ? "Agotado" : p.Cantidad <= 5 ? "Stock bajo" : "Disponible";
+                    var porcentaje = Math.Min(100, p.Cantidad * 10);
+                    <tr>
+                        <td><div class="product-cell"><span class="product-avatar">@p.Nombre.Substring(0, 1).ToUpperInvariant()</span><div><strong>@p.Nombre</strong><small>ID #@p.Id</small></div></div></td>
+                        <td>Q@(p.Precio.ToString("N2"))</td>
+                        <td><div class="stock-number"><strong>@p.Cantidad</strong><span>unidades</span></div><div class="stock-bar"><span class="@estadoClase" style="width:@porcentaje%"></span></div></td>
+                        <td><strong>Q@((p.Precio * p.Cantidad).ToString("N2"))</strong></td>
+                        <td><span class="status-pill @estadoClase">@estadoTexto</span></td>
+                        <td class="actions"><a asp-action="Detalle" asp-route-id="@p.Id">◉ Ver</a><a asp-action="Editar" asp-route-id="@p.Id">✎ Actualizar</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>
